@@ -14,43 +14,15 @@ def spearmanRho(file1="Lion.csv", file2="Blue Wildebeest.csv"):
     -year is second value in each line, population is third value in each line
     -It also checks to make sure that the years match
      up as some data sets may skip years
-    -Defaults to lion and blue wildebeest data
     '''
     
     #creates variables to store names of each animal from file names
     #for use in graph labels
     animal1 = file1.strip(".csv")
     animal2 = file2.strip(".csv")
-
-    #opens first file and creates list with year and
-    #population data in list of lists
-    #also creates year and population data lists for use in graphs
-    f1 = open(file1, 'r')
-    next(f1) #starts reading at 2nd line, ignoring header row
-    data1 = []
-    years1 = []
-    pop1 = []
-    for line in f1:
-        line = line.split(",")
-        line[2] = line[2].strip('\n')
-        data1.append(line[1:])
-        years1.append(line[1])
-        pop1.append(line[2])
     
-    #opens second file and creates list with year and
-    #population data in list of lists
-    #also creates year and population data lists for use in graphs
-    f2 = open(file2, 'r')
-    next(f2) #starts reading at 2nd line, ignoring header row
-    data2 = []
-    years2 = []
-    pop2 = []
-    for line in f2:
-        line = line.split(",")
-        line[2] = line[2].strip('\n')
-        data2.append(line[1:])
-        years2.append(line[1])
-        pop2.append(line[2])
+    data1, years1, pop1 = get_data_from_file(file1)
+    data2, years2, pop2 = get_data_from_file(file2)
         
     #initializes two lists to collect data for years that match up
     datas_1 = []
@@ -66,15 +38,15 @@ def spearmanRho(file1="Lion.csv", file2="Blue Wildebeest.csv"):
                 datas_1.append(thing[1])
    
     #converts all data values to floats
-    datas_1 = map(float, datas_1)
-    datas_2 = map(float, datas_2)
-    years1 = map(float, years1)
-    years2 = map(float, years2)
-    pop1 = map(float, pop1)
-    pop2 = map(float, pop2)
+    datas_1 = list(map(float, datas_1))
+    datas_2 = list(map(float, datas_2))
+    years1 = list(map(float, years1))
+    years2 = list(map(float, years2))
+    pop1 = list(map(float, pop1))
+    pop2 = list(map(float, pop2))
     
     #runs Spearman's rho test
-    print scipy.stats.spearmanr(datas_1, datas_2)
+    print (scipy.stats.spearmanr(datas_1, datas_2))
     
     #Creates plot of the population of one animal versus the
     #population of a second animal, formatting the plot appropriately
@@ -83,7 +55,7 @@ def spearmanRho(file1="Lion.csv", file2="Blue Wildebeest.csv"):
     pylab.title("Population of " + animal2 + " vs. Population of " + animal1)
     pylab.xlabel(file1.strip(".csv") + " Population")
     pylab.ylabel(file2.strip(".csv") + " Population")
-    ax.set_axis_bgcolor('#D8EFF3')
+    ax.set_facecolor('#D8EFF3')
     
     #Creates side-by-side plot of the two related animals
     fig2, (ax1, ax2) = pylab.subplots(1, 2, facecolor = "#FFFAF0")
@@ -97,11 +69,30 @@ def spearmanRho(file1="Lion.csv", file2="Blue Wildebeest.csv"):
     ax2.set_xlabel("Year")
     ax1.set_ylabel(animal1 + " Population")
     ax2.set_ylabel(animal2 + " Population")
-    ax1.set_axis_bgcolor('#D8EFF3')
-    ax2.set_axis_bgcolor('#FFE4E1')
+    ax1.set_facecolor('#D8EFF3')
+    ax2.set_facecolor('#FFE4E1')
 
     #displays the plots
     pylab.show()
+
+def get_data_from_file(file_name):
+    '''
+    opens first file and creates list with year and
+    population data in list of lists
+    also creates year and population data lists for use in graphs
+    '''
+    f = open(file_name, 'r')
+    next(f) #starts reading at 2nd line, ignoring header row
+    data = []
+    years = []
+    pop = []
+    for line in f:
+        line = line.split(",")
+        line[2] = line[2].strip('\n')
+        data.append(line[1:])
+        years.append(line[1])
+        pop.append(line[2])
+    return data, years, pop
     
 #example function call
 spearmanRho("Eurasian kestrel.csv", "Long-eared owl.csv")
